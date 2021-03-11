@@ -32,10 +32,12 @@ const ExampleScreen = () => {
         console.log("subscribe");
         const stripe = await stripePromise;
 
-        const { sessionId } = await getSubscribeSessionId({
+        const res = await getSubscribeSessionId({
             successUrl: `put your return success url here`,
             cancelUrl: `put your return cancel url here`,
         })
+        if (res.statusCode !== 200) return;
+        const sessionId = res.data.sessionId;
         console.log("sessionId", sessionId);
         // When the customer clicks on the button, redirect them to Checkout.
         const result = await stripe.redirectToCheckout({
