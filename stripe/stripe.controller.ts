@@ -14,8 +14,6 @@ export class StripeController {
     @Post('subscribe')
     @Roles('user', 'premium', 'admin')
     async createSpartanSession(@Body() body, @AuthUser() user) {
-        console.log("subscribe", body);
-        console.log("subscribe", user);
         try {
             const sessionId = await this.stripeService.getSessionIdSpartan(body, user);
             if (!sessionId) {
