@@ -53,7 +53,7 @@ const ExampleScreen = () => {
 
     const openPortalStripe = async () => {
         const res = await getPortalSessionUrl();
-        if (res.success) {
+        if (res.statusCode == 200 && res.data.success) {
             const link = document.createElement('a');
             link.href = res.url;
             link.target = "_blank";
