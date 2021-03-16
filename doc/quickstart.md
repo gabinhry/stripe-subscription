@@ -83,9 +83,9 @@ Add sussess and cancel urls.
 
 And following code in pages.navigation.tsx :
 
-<pre>
+```
     <Route exact path="/example" component={ExampleScreen} />
-</pre>
+```
 
 You need to be connected to access to this page.
 
