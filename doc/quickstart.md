@@ -82,6 +82,7 @@ Add folder `example` in your `frontend/src/pages`.
 Add sussess and cancel urls.
 
 And following code in pages.navigation.tsx :
+
 <pre>
     <Route exact path="/example" component={ExampleScreen} />
 </pre>
