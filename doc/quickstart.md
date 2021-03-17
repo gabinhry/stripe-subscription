@@ -89,10 +89,10 @@ const rawBodyBuffer = (req: any, res: any, buf: any, encoding: any) => {
     if (buf && buf.length) {
       req.rawBody = buf.toString(encoding || 'utf8');
     }
-  };
+};
 
-  app.use(bodyParser.urlencoded({ verify: rawBodyBuffer, extended: true }));
-  app.use(bodyParser.json({ verify: rawBodyBuffer }));
+app.use(bodyParser.urlencoded({ verify: rawBodyBuffer, extended: true }));
+app.use(bodyParser.json({ verify: rawBodyBuffer }));
 </pre>
 
 ### Step 8 - Front
