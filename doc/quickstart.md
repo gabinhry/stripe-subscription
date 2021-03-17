@@ -76,7 +76,26 @@ In user.service.ts add following code :
 ### Step 6
 In backend install `npm install stripe@8.132.0`
 
-### Step 7 - Front
+### Step 7
+
+Add following code in main.ts
+
+<pre>
+import * as bodyParser from 'body-parser';
+
+(...)
+
+const rawBodyBuffer = (req: any, res: any, buf: any, encoding: any) => {
+    if (buf && buf.length) {
+      req.rawBody = buf.toString(encoding || 'utf8');
+    }
+  };
+
+  app.use(bodyParser.urlencoded({ verify: rawBodyBuffer, extended: true }));
+  app.use(bodyParser.json({ verify: rawBodyBuffer }));
+</pre>
+
+### Step 8 - Front
 Add folder `example` in your `frontend/src/pages`.
 
 Add sussess and cancel urls.
@@ -89,10 +108,10 @@ And following code in pages.navigation.tsx :
 
 You need to be connected to access to this page.
 
-### Step 8
+### Step 9
 In frontend install `npm install @stripe/stripe-js@1.11.0`
 
-### Step 9
+### Step 10
 Add stripe public key in your environment :
 <pre>
     stripePK: "pk_test_XxxXXXXxXXXXXXXxXXxxxxxXxxXXXXxXXXXXXXxXXxxxxxXxxXXXXxXXXXXXXxXXxxxxxXxxXXXXxXXXXXXXxXXxxxxx"
