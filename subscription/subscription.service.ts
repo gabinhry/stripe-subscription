@@ -24,12 +24,12 @@ export class SubscriptionService {
         return await this.subscriptionRepository.save(subscriptionEntity);
     }
 
-    async deleteSubscription(user): Promise<SubscriptionEntity> {
+    async updateSubscriptionEndDate(user: any, endDate: Date): Promise<SubscriptionEntity> {
         const subscription = await this.findOneSubscription(user);
         if (!subscription) return null;
 
         const subscriptionEntity = new SubscriptionEntity();
-        subscriptionEntity.endDate = new Date();
+        subscriptionEntity.endDate = endDate;
 
         this.subscriptionRepository.update(subscription.id, subscriptionEntity);
     }
