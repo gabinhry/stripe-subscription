@@ -115,47 +115,50 @@ export class StripeService {
                     user = await this.usersService.findOne({ id: userId });
                     this.subscriptionService.createSubscription(user, "STRIPE", stripeSubscriptionId);
                     this.usersService.updateStripe(user.id, stripeCustomerId);
-                    /*
-                    this.mailerService.sendMail(user.email, Template.SUBSCRIPTION_SUCCESS, {
-                        pseudo: user.pseudo
-                    });
-                    */
                     this.usersService.updateRole(user.id, "premium");
                     this.createLogs(user, "completed");
                     return { responseStatusCode: 200 };
+
                 // Event call every month when the subscription is paid
                 case 'invoice.paid':
                     this.usersService.updateRole(user.id, "premium");
                     this.createLogs(user, "paid");
                     return { responseStatusCode: 200 };
+
+                // unpaid subscription (payment problem)
                 case 'invoice.payment_failed':
-                    /*
-                    this.mailerService.sendMail(user.email, Template.SUBSCRIPTION_FAILED, {
-                        pseudo: user.pseudo
-                    });
-                    */
                     this.usersService.updateRole(user.id, "user");
                     this.createLogs(user, "payment_failed");
                     return { responseStatusCode: 200 };
+
+                // subscription modified
+                case 'customer.subscription.updated':
+                    // cancelling of the subscription rollout
+                    if (data.object.cancel_at_period_end) {
+                        const unixTimestamp = data.object.cancel_at;
+                        const endDateMilliseconds = unixTimestamp * 1000;
+                        this.subscriptionService.updateSubscriptionEndDate(user, new Date(endDateMilliseconds));
+                        this.createLogs(user, "updated");
+                    } else { // re-activation of the subscription
+                        this.subscriptionService.updateSubscriptionEndDate(user, null);
+                        this.createLogs(user, "updated");
+                    }
+                    return { responseStatusCode: 200 };
+
+                // subscription deleted. 
+                // Event sent at the value date of the cancelation (end of month according to your settings)
                 case 'customer.subscription.deleted':
-                    /*
-                    this.mailerService.sendMail(user.email, Template.SUBSCRIPTION_DELETED, {
-                        pseudo: user.pseudo
-                    });
-                    */
-                    this.subscriptionService.deleteSubscription(user);
+                    this.subscriptionService.updateSubscriptionEndDate(user, new Date ());
                     this.usersService.updateRole(user.id, "user");
                     this.createLogs(user, "deleted");
                     return { responseStatusCode: 200 };
+
+                // Require an external action (ex: autorise the billing on your bank app on your phone)
                 case 'invoice.payment_action_required':
-                    /*
-                    this.mailerService.sendMail(user.email, Template.SUBSCRIPTION_ACTION_REQUIRED, {
-                        pseudo: user.pseudo
-                    });
-                    */
                     this.usersService.updateRole(user.id, "user");
                     this.createLogs(user, "payment_action_required");
                     return { responseStatusCode: 200 };
+
                 default:
                     console.log('[STRIPE] unhandled event type');
                     console.log('[STRIPE] event.type :>>', event.type);
