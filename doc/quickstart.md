@@ -25,6 +25,7 @@ And for the webhookSecret you need to create a webhook with these events :
 - checkout.session.completed
 - invoice.paid
 - invoice.payment_failed
+- customer.subscription.updated
 - customer.subscription.deleted
 - invoice.payment_action_required
 
